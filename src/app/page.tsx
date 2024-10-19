@@ -71,16 +71,16 @@ export default function AdsDataPage() {
 
 
   useEffect(() => {
-    const filtered = ads.filter((ad) => {
-      const matchesCTA = selectedCTA === "ALL" || ad.CTA === selectedCTA;
-      const matchesSearchTerm = searchTerm === "" || ad.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCTA && matchesSearchTerm;
-    });
-  
-    setFilteredAds(filtered);
-    setCurrentPage(1); // Reset to the first page when the filter changes
-  }, [selectedCTA, searchTerm, ads]);
-  
+  const filtered = ads.filter((ad) => {
+    const matchesCTA = selectedCTA === "ALL" || ad.CTA === selectedCTA;
+    const matchesSearchTerm = searchTerm === "" || ad.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCTA && matchesSearchTerm;
+  });
+
+  setFilteredAds(filtered);
+  setCurrentPage(1); // Reset to the first page when the filter changes
+}, [selectedCTA, searchTerm, ads]);
+
 
   // Pagination controls
   const totalPages = Math.ceil(filteredAds.length / pageSize);
@@ -98,17 +98,20 @@ export default function AdsDataPage() {
   };
   
  // Function to clean and re-encode the corrupted data
-const cleanCorruptedText = (text: string) => {
+ const cleanCorruptedText = (text: string) => {
   try {
-    // Decode URI component if it's mis-encoded
-    return decodeURIComponent(escape(text));
+    // Step 1: Attempt to fix encoding issues (like MÃ©decins)
+    const encoder = new TextEncoder();
+    const encodedText = encoder.encode(text);  // Re-encode text to fix encoding issues
+    const decodedText = new TextDecoder('utf-8').decode(encodedText);  // Decode the re-encoded text
+
+    // Step 2: Fix emojis or other special characters using decodeURIComponent
+    return decodeURIComponent(escape(decodedText));
   } catch (e) {
     // If it fails, return the original text
     return text;
   }
 };
-
-
 
   // Get unique CTAs for dropdown
   const uniqueCTAs = Array.from(new Set(ads.map(ad => ad.CTA)));
