@@ -7,7 +7,7 @@ export async function GET() {
       .from("ads_data")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(1000);
+      .limit(900);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
