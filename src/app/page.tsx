@@ -32,7 +32,7 @@ export default function AdsDataPage() {
       try {
         const response = await fetch("/api/fetchallAds"); // Ensure this is the correct path
         const data = await response.json();
-
+  
         if (response.ok) {
           const normalizedData = data.map((ad: any) => ({
             id: ad.id,
@@ -45,13 +45,15 @@ export default function AdsDataPage() {
             tag: ad.tag || "other",
             created_at: ad.created_at || "N/A"  // Include created_at
           }));
-
+  
           // Sort ads by created_at in descending order
           const sortedAds = normalizedData.sort((a: Ad, b: Ad) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-
+  
           setAds(sortedAds);
           setFilteredAds(sortedAds); // Initially show all ads
+  
+          // Add console log after data is fetched and set
+          console.log("Fetch of latest 1000 ads just completed");
         } else {
           console.error("Error fetching ads:", data.error);
         }
@@ -59,8 +61,10 @@ export default function AdsDataPage() {
         console.error("Error fetching ads:", error);
       }
     };
+  
     fetchAds();
   }, []);
+  
 
   // Filter ads as the selected CTA changes
   useEffect(() => {
