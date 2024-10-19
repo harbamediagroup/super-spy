@@ -20,6 +20,8 @@ export default function AdsDataPage() {
   const [filteredAds, setFilteredAds] = useState<Ad[]>([]);
   const [selectedCTA, setSelectedCTA] = useState<string>("ALL");
   const [isCTADropdownOpen, setIsCTADropdownOpen] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,6 +68,19 @@ export default function AdsDataPage() {
     setFilteredAds(filtered);
     setCurrentPage(1); // Reset to the first page when the filter changes
   }, [selectedCTA, ads]);
+
+
+  useEffect(() => {
+    const filtered = ads.filter((ad) => {
+      const matchesCTA = selectedCTA === "ALL" || ad.CTA === selectedCTA;
+      const matchesSearchTerm = searchTerm === "" || ad.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesCTA && matchesSearchTerm;
+    });
+  
+    setFilteredAds(filtered);
+    setCurrentPage(1); // Reset to the first page when the filter changes
+  }, [selectedCTA, searchTerm, ads]);
+  
 
   // Pagination controls
   const totalPages = Math.ceil(filteredAds.length / pageSize);
@@ -116,6 +131,18 @@ const cleanCorruptedText = (text: string) => {
           <div className="flex justify-between mb-4">
             <h1 className="text-4xl font-bold text-black">ADS</h1>
           </div>
+
+          {/* Search Bar */}
+<div className="relative mb-4 inline-block w-full">
+  <input
+    type="text"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    placeholder="Search by description..."
+    className="w-full rounded-md border-gray-200 py-2 px-4 text-gray-900 shadow-sm focus:outline-none focus:ring focus:border-indigo-500 sm:text-sm"
+  />
+</div>
+
 
           {/* Dropdown for CTA Filter */}
           <div className="relative mb-4 inline-block">
